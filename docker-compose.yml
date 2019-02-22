@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+
+  db:
+    image: mysql:5.7
+    container_name: cakedb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: super2adm1n
+      MYSQL_DATABASE: cake_db
+      MYSQL_USER: cake_user
+      MYSQL_PASSWORD: c2kepHp
+    ports:
+      - 3306:3306
+    volumes:
+      - ./.db:/var/lib/mysql
+    networks:
+      - back
+
+  php:
+    image: occitech/cakephp:5-apache
+    container_name: cakephp
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - .:/var/www/html/
+    depends_on:
+      - db
+    links:
+      - db
+    networks:
+      - back
+
+networks:
+  back:
+    driver: "bridge"
