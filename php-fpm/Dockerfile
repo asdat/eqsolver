@@ -1,5 +1,6 @@
 FROM php:7.3-fpm
 
+#Basic CakePHP required libs
 RUN requirements="libmcrypt-dev g++ libicu-dev" \
     && apt-get update && apt-get install -y $requirements && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install pdo_mysql \
@@ -9,7 +10,12 @@ RUN requirements="libmcrypt-dev g++ libicu-dev" \
     && requirementsToRemove="g++" \
     && apt-get purge --auto-remove -y $requirementsToRemove
 
+#Setup PHP-FPM
 RUN sed -i -e 's/listen.*/listen = 0.0.0.0:9000/' /usr/local/etc/php-fpm.conf \
     && usermod -u 1000 www-data
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+&& composer --version
 
 CMD ["php-fpm"]
