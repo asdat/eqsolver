@@ -19,13 +19,12 @@ services:
       - back
 
   php:
-    image: occitech/cakephp:5-apache
-    container_name: cakephp
+    build:
+      context: ./php-fpm/
+    container_name: php
     restart: always
-    ports:
-      - 8080:80
     volumes:
-      - .:/var/www/html/
+      - ./app/:/var/www/html/
     depends_on:
       - db
     links:
@@ -33,6 +32,26 @@ services:
     networks:
       - back
 
+  nginx:
+    build:
+      context: ./nginx/
+    container_name: nginx
+    restart: always
+    volumes:
+      - ./app/:/var/www/html/
+    depends_on:
+      - php
+      - db
+    links:
+      - php
+    ports:
+      - 80:80
+    networks:
+      - back
+      - front
+
 networks:
   back:
+    driver: "bridge"
+  front:
     driver: "bridge"
