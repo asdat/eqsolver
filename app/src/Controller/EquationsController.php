@@ -4,12 +4,13 @@ namespace App\Controller;
 use App\Controller\AppController;
 
 /**
- * Equation Controller
+ * Equations Controller
  *
+ * @property \App\Model\Table\EquationsTable $Equations
  *
  * @method \App\Model\Entity\Equation[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
-class EquationController extends AppController
+class EquationsController extends AppController
 {
 
     /**
@@ -19,9 +20,9 @@ class EquationController extends AppController
      */
     public function index()
     {
-        $equation = $this->paginate($this->Equation);
+        $equations = $this->paginate($this->Equations);
 
-        $this->set(compact('equation'));
+        $this->set(compact('equations'));
     }
 
     /**
@@ -33,8 +34,8 @@ class EquationController extends AppController
      */
     public function view($id = null)
     {
-        $equation = $this->Equation->get($id, [
-            'contain' => []
+        $equation = $this->Equations->get($id, [
+            'contain' => ['Results']
         ]);
 
         $this->set('equation', $equation);
@@ -47,10 +48,10 @@ class EquationController extends AppController
      */
     public function add()
     {
-        $equation = $this->Equation->newEntity();
+        $equation = $this->Equations->newEntity();
         if ($this->request->is('post')) {
-            $equation = $this->Equation->patchEntity($equation, $this->request->getData());
-            if ($this->Equation->save($equation)) {
+            $equation = $this->Equations->patchEntity($equation, $this->request->getData());
+            if ($this->Equations->save($equation)) {
                 $this->Flash->success(__('The equation has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -69,12 +70,12 @@ class EquationController extends AppController
      */
     public function edit($id = null)
     {
-        $equation = $this->Equation->get($id, [
+        $equation = $this->Equations->get($id, [
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $equation = $this->Equation->patchEntity($equation, $this->request->getData());
-            if ($this->Equation->save($equation)) {
+            $equation = $this->Equations->patchEntity($equation, $this->request->getData());
+            if ($this->Equations->save($equation)) {
                 $this->Flash->success(__('The equation has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -94,8 +95,8 @@ class EquationController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $equation = $this->Equation->get($id);
-        if ($this->Equation->delete($equation)) {
+        $equation = $this->Equations->get($id);
+        if ($this->Equations->delete($equation)) {
             $this->Flash->success(__('The equation has been deleted.'));
         } else {
             $this->Flash->error(__('The equation could not be deleted. Please, try again.'));
